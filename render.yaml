@@ -1,11 +1,10 @@
 services:
   - type: web
     name: gios-backend
-    env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    env: docker
     envVars:
       - key: GIOS_CORS_ORIGINS
         value: "*"
       - key: GIOS_DEBUG
         value: "false"
+
