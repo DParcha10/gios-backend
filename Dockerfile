@@ -1,12 +1,13 @@
-# Use a slim Python image
-FROM python:3.11-slim
+# Use an official Python runtime as a parent image
+FROM python:3.10-slim
 
-# Install system-level geospatial dependencies
+# Install system dependencies for geospatial libraries
 RUN apt-get update && apt-get install -y \
+    binutils \
+    libproj-dev \
     gdal-bin \
     libgdal-dev \
     python3-gdal \
-    gcc \
     g++ \
     && rm -rf /var/lib/apt/lists/*
 
@@ -16,16 +17,17 @@ ENV C_INCLUDE_PATH=/usr/include/gdal
 
 WORKDIR /app
 
-# Install dependencies
+# Upgrade pip and install build tools
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
+
+# Install dependencies one by one to avoid version conflicts
 COPY requirements.txt .
 RUN pip install --no-cache-dir numpy==1.26.4
+RUN pip install --no-cache-dir rasterio==1.3.10
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
+# Copy the rest of the code
 COPY . .
 
-# Expose the port
-EXPOSE 8000
-
-# Start the application
-CMD ["uvicorn", "main.py:app", "--host", "0.0.0.0", "--port", "8000"]
+# Use the PORT environment variable provided by Render
+CMD uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}
