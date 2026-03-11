@@ -13,6 +13,7 @@ xarray==2024.5.0
 rioxarray==0.15.5
 shapely==2.0.4
 pyproj==3.6.1
+geopandas==0.14.4
 pandas==2.2.2
 numpy==1.26.4
 python-dotenv==1.0.1
